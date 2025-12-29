@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coface Knowledge Graph - Risk Intelligence Platform</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --secondary: #06b6d4;
+            --accent: #f59e0b;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --success: #10b981;
+            --bg-dark: #0a0a0f;
+            --bg-card: #12121a;
+            --bg-elevated: #1a1a24;
+            --text-primary: #f1f5f9;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --border: #2a2a3a;
+            --coface-red: #e31937;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        .header {
+            background: linear-gradient(180deg, rgba(139, 92, 246, 0.1) 0%, transparent 100%);
+            border-bottom: 1px solid var(--border);
+            padding: 1rem 2rem;
+        }
+
+        .header-content {
+            max-width: 1800px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.3rem;
+        }
+
+        .logo-text {
+            font-size: 1.3rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary) 0%, #c4b5fd 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .logo-subtitle {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .header-badges {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            padding: 0.4rem 0.75rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        .main {
+            max-width: 1800px;
+            margin: 0 auto;
+            padding: 1.5rem 2rem;
+            display: grid;
+            grid-template-columns: 320px 1fr 350px;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 1400px) {
+            .main { grid-template-columns: 1fr; }
+        }
+
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .card-body { padding: 1.25rem; }
+
+        /* Search Box */
+        .search-box {
+            position: relative;
+            margin-bottom: 1rem;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.5rem;
+            background: var(--bg-dark);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-size: 0.85rem;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 0.75rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+        }
+
+        /* Company List */
+        .company-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+
+        .company-item:hover {
+            background: var(--bg-dark);
+            transform: translateX(4px);
+        }
+
+        .company-item.selected {
+            border-color: var(--primary);
+            background: rgba(139, 92, 246, 0.1);
+        }
+
+        .company-logo {
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        .company-info h4 {
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 0.15rem;
+        }
+
+        .company-info p {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .company-score {
+            margin-left: auto;
+            font-size: 0.9rem;
+            font-weight: 700;
+        }
+
+        .company-score.high { color: var(--success); }
+        .company-score.medium { color: var(--warning); }
+        .company-score.low { color: var(--danger); }
+
+        /* Graph Canvas */
+        .graph-container {
+            position: relative;
+            height: 550px;
+            background: radial-gradient(circle at center, rgba(139, 92, 246, 0.05) 0%, transparent 70%);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .graph-canvas {
+            width: 100%;
+            height: 100%;
+        }
+
+        .graph-node {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .graph-node:hover {
+            transform: scale(1.1);
+        }
+
+        .node-circle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            border: 3px solid;
+            transition: all 0.3s;
+        }
+
+        .node-circle.primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%);
+            border-color: var(--primary);
+            width: 80px;
+            height: 80px;
+            font-size: 2rem;
+        }
+
+        .node-circle.supplier {
+            background: rgba(6, 182, 212, 0.2);
+            border-color: var(--secondary);
+        }
+
+        .node-circle.customer {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--success);
+        }
+
+        .node-circle.subsidiary {
+            background: rgba(245, 158, 11, 0.2);
+            border-color: var(--warning);
+        }
+
+        .node-circle.competitor {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--danger);
+        }
+
+        .node-label {
+            margin-top: 0.5rem;
+            font-size: 0.7rem;
+            font-weight: 500;
+            text-align: center;
+            max-width: 80px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .node-risk {
+            font-size: 0.6rem;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            margin-top: 0.25rem;
+        }
+
+        .node-risk.low { background: rgba(16, 185, 129, 0.2); color: var(--success); }
+        .node-risk.medium { background: rgba(245, 158, 11, 0.2); color: var(--warning); }
+        .node-risk.high { background: rgba(239, 68, 68, 0.2); color: var(--danger); }
+
+        /* SVG Lines */
+        .graph-svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+
+        .graph-line {
+            stroke-width: 2;
+            fill: none;
+            opacity: 0.6;
+        }
+
+        .graph-line.supply { stroke: var(--secondary); stroke-dasharray: 5,5; }
+        .graph-line.customer { stroke: var(--success); }
+        .graph-line.ownership { stroke: var(--warning); stroke-width: 3; }
+        .graph-line.competitor { stroke: var(--danger); stroke-dasharray: 8,4; }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 1rem;
+            padding: 0.75rem;
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+        }
+
+        .legend-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .legend-line {
+            width: 20px;
+            height: 3px;
+            border-radius: 2px;
+        }
+
+        /* Risk Metrics */
+        .risk-metric {
+            background: var(--bg-elevated);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .risk-metric-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .risk-metric-label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .risk-metric-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+        }
+
+        .risk-bar {
+            height: 8px;
+            background: var(--bg-dark);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .risk-fill {
+            height: 100%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
+
+        /* Query Panel */
+        .query-box {
+            background: var(--bg-dark);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .query-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-bottom: 0.5rem;
+        }
+
+        .query-text {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.75rem;
+            color: var(--secondary);
+            line-height: 1.4;
+        }
+
+        /* Impact Table */
+        .impact-table {
+            width: 100%;
+            font-size: 0.8rem;
+        }
+
+        .impact-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.6rem 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .impact-row:last-child {
+            border-bottom: none;
+        }
+
+        .impact-company {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .impact-icon {
+            font-size: 1rem;
+        }
+
+        .impact-exposure {
+            font-weight: 600;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 0.6rem 1.25rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(139, 92, 246, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-elevated);
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+        }
+
+        .controls {
+            display: flex;
+            gap: 0.75rem;
+            padding: 1rem 1.25rem;
+            border-top: 1px solid var(--border);
+        }
+
+        /* Alert */
+        .alert {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+
+        .alert-danger {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid var(--danger);
+        }
+
+        .alert-warning {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid var(--warning);
+        }
+
+        .alert-icon {
+            font-size: 1.25rem;
+        }
+
+        .alert-content h4 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .alert-content p {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+        }
+
+        /* Animation */
+        @keyframes pulseRisk {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+            50% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+        }
+
+        .pulse-danger {
+            animation: pulseRisk 1.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <div class="logo">
+                <div class="logo-icon">🕸️</div>
+                <div>
+                    <div class="logo-text">Coface Knowledge Graph</div>
+                    <div class="logo-subtitle">Corporate Risk Intelligence</div>
+                </div>
+            </div>
+            <div class="header-badges">
+                <span class="badge">Neo4j GraphDB</span>
+                <span class="badge">195M Companies</span>
+                <span class="badge">GraphRAG</span>
+                <span class="badge">Real-time Updates</span>
+            </div>
+        </div>
+    </header>
+
+    <main class="main">
+        <!-- Left Panel -->
+        <div>
+            <div class="card" style="margin-bottom: 1rem;">
+                <div class="card-header">
+                    <h3 class="card-title">🔍 Company Search</h3>
+                </div>
+                <div class="card-body">
+                    <div class="search-box">
+                        <span class="search-icon">🔎</span>
+                        <input type="text" class="search-input" placeholder="Search companies..." id="searchInput">
+                    </div>
+
+                    <div id="companyList">
+                        <div class="company-item" onclick="selectCompany('airbus')">
+                            <div class="company-logo" style="background: #003366;">✈️</div>
+                            <div class="company-info">
+                                <h4>Airbus SE</h4>
+                                <p>Aerospace • Netherlands</p>
+                            </div>
+                            <span class="company-score high">8.2</span>
+                        </div>
+                        <div class="company-item" onclick="selectCompany('stellantis')">
+                            <div class="company-logo" style="background: #1e3a5f;">🚗</div>
+                            <div class="company-info">
+                                <h4>Stellantis NV</h4>
+                                <p>Automotive • Netherlands</p>
+                            </div>
+                            <span class="company-score medium">6.4</span>
+                        </div>
+                        <div class="company-item" onclick="selectCompany('safran')">
+                            <div class="company-logo" style="background: #0066cc;">⚙️</div>
+                            <div class="company-info">
+                                <h4>Safran SA</h4>
+                                <p>Aerospace • France</p>
+                            </div>
+                            <span class="company-score high">7.8</span>
+                        </div>
+                        <div class="company-item" onclick="selectCompany('valeo')">
+                            <div class="company-logo" style="background: #00a650;">🔧</div>
+                            <div class="company-info">
+                                <h4>Valeo SE</h4>
+                                <p>Auto Parts • France</p>
+                            </div>
+                            <span class="company-score low">4.9</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Natural Language Query -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">💬 GraphRAG Query</h3>
+                </div>
+                <div class="card-body">
+                    <div class="query-box">
+                        <div class="query-label">Natural Language</div>
+                        <input type="text" class="search-input" style="padding-left: 1rem;" placeholder="Ask about company relationships..." id="nlQuery" value="Show exposure to German automotive suppliers">
+                    </div>
+                    <button class="btn btn-primary" style="width: 100%;" onclick="runQuery()">
+                        <span>🚀</span> Run Query
+                    </button>
+
+                    <div style="margin-top: 1rem;">
+                        <div class="query-label" style="margin-bottom: 0.5rem;">Generated Cypher</div>
+                        <div class="query-box">
+                            <div class="query-text" id="cypherQuery">
+                                MATCH (c:Company)-[:SUPPLIES]->(t:Company)<br>
+                                WHERE t.country = 'Germany'<br>
+                                AND t.sector = 'Automotive'<br>
+                                RETURN c, t, r
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Center Panel - Graph -->
+        <div>
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🕸️ Relationship Graph</h3>
+                    <div style="display: flex; gap: 0.5rem;">
+                        <button class="btn btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;" onclick="zoomIn()">➕</button>
+                        <button class="btn btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;" onclick="zoomOut()">➖</button>
+                        <button class="btn btn-secondary" style="padding: 0.4rem 0.75rem; font-size: 0.75rem;" onclick="resetGraph()">↺</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="legend">
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--primary);"></div>
+                            <span>Selected</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--secondary);"></div>
+                            <span>Supplier</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--success);"></div>
+                            <span>Customer</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-dot" style="background: var(--warning);"></div>
+                            <span>Subsidiary</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-line" style="background: var(--danger); opacity: 0.6;"></div>
+                            <span>Competitor</span>
+                        </div>
+                    </div>
+
+                    <div class="graph-container" id="graphContainer">
+                        <svg class="graph-svg" id="graphSvg"></svg>
+                        <div id="graphNodes">
+                            <div style="color: var(--text-muted); text-align: center; padding: 10rem 2rem;">
+                                Select a company to visualize its relationship network...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="controls">
+                    <button class="btn btn-primary" onclick="expandGraph()">
+                        <span>🔗</span> Expand Connections
+                    </button>
+                    <button class="btn btn-danger" onclick="simulateDefault()">
+                        <span>⚠️</span> Simulate Default
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportGraph()">
+                        <span>📤</span> Export
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div>
+            <!-- Risk Propagation Alert -->
+            <div id="alertPanel" style="display: none;">
+                <div class="alert alert-danger">
+                    <span class="alert-icon">🚨</span>
+                    <div class="alert-content">
+                        <h4>Cascade Risk Detected</h4>
+                        <p id="alertText">If Valeo defaults, 3 insured clients face €12.4M exposure</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Company Details -->
+            <div class="card" style="margin-bottom: 1rem;">
+                <div class="card-header">
+                    <h3 class="card-title">📊 Company Profile</h3>
+                </div>
+                <div class="card-body" id="companyProfile">
+                    <div style="color: var(--text-muted); text-align: center; padding: 2rem;">
+                        Select a company to view details...
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Metrics -->
+            <div class="card" style="margin-bottom: 1rem;">
+                <div class="card-header">
+                    <h3 class="card-title">⚡ Risk Metrics</h3>
+                </div>
+                <div class="card-body" id="riskMetrics">
+                    <div class="risk-metric">
+                        <div class="risk-metric-header">
+                            <span class="risk-metric-label">Direct Exposure</span>
+                            <span class="risk-metric-value" style="color: var(--text-muted);">—</span>
+                        </div>
+                        <div class="risk-bar">
+                            <div class="risk-fill" style="width: 0%; background: var(--primary);"></div>
+                        </div>
+                    </div>
+                    <div class="risk-metric">
+                        <div class="risk-metric-header">
+                            <span class="risk-metric-label">Contagion Risk</span>
+                            <span class="risk-metric-value" style="color: var(--text-muted);">—</span>
+                        </div>
+                        <div class="risk-bar">
+                            <div class="risk-fill" style="width: 0%; background: var(--warning);"></div>
+                        </div>
+                    </div>
+                    <div class="risk-metric">
+                        <div class="risk-metric-header">
+                            <span class="risk-metric-label">Sector Concentration</span>
+                            <span class="risk-metric-value" style="color: var(--text-muted);">—</span>
+                        </div>
+                        <div class="risk-bar">
+                            <div class="risk-fill" style="width: 0%; background: var(--secondary);"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cascade Impact -->
+            <div class="card">
+                <div class="card-header">
+                    <h3 class="card-title">🌊 Cascade Impact Analysis</h3>
+                </div>
+                <div class="card-body">
+                    <div class="impact-table" id="impactTable">
+                        <div style="color: var(--text-muted); font-size: 0.8rem; text-align: center; padding: 1rem;">
+                            Run "Simulate Default" to see cascade impact...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        let selectedCompany = null;
+
+        const companyData = {
+            airbus: {
+                name: 'Airbus SE',
+                icon: '✈️',
+                sector: 'Aerospace & Defense',
+                country: 'Netherlands',
+                score: 8.2,
+                revenue: '€65.4B',
+                employees: '134,000',
+                connections: {
+                    suppliers: [
+                        { name: 'Safran SA', icon: '⚙️', score: 7.8, type: 'supplier' },
+                        { name: 'MTU Aero', icon: '🔧', score: 7.2, type: 'supplier' },
+                        { name: 'Spirit Aero', icon: '🛩️', score: 5.4, type: 'supplier' }
+                    ],
+                    customers: [
+                        { name: 'Lufthansa', icon: '✈️', score: 6.8, type: 'customer' },
+                        { name: 'Emirates', icon: '🌍', score: 8.1, type: 'customer' },
+                        { name: 'Air France-KLM', icon: '🇫🇷', score: 5.9, type: 'customer' }
+                    ],
+                    subsidiaries: [
+                        { name: 'Airbus Helicopters', icon: '🚁', score: 7.5, type: 'subsidiary' },
+                        { name: 'Airbus Defence', icon: '🛡️', score: 7.9, type: 'subsidiary' }
+                    ]
+                },
+                directExposure: 45,
+                contagionRisk: 28,
+                sectorConcentration: 72
+            },
+            stellantis: {
+                name: 'Stellantis NV',
+                icon: '🚗',
+                sector: 'Automotive',
+                country: 'Netherlands',
+                score: 6.4,
+                revenue: '€189.5B',
+                employees: '281,000',
+                connections: {
+                    suppliers: [
+                        { name: 'Valeo SE', icon: '🔧', score: 4.9, type: 'supplier' },
+                        { name: 'Continental AG', icon: '🔴', score: 5.8, type: 'supplier' },
+                        { name: 'Bosch', icon: '⚡', score: 7.1, type: 'supplier' }
+                    ],
+                    customers: [
+                        { name: 'Leasys', icon: '🚙', score: 6.2, type: 'customer' },
+                        { name: 'Hertz Europe', icon: '🚗', score: 5.4, type: 'customer' }
+                    ],
+                    subsidiaries: [
+                        { name: 'Peugeot', icon: '🦁', score: 6.5, type: 'subsidiary' },
+                        { name: 'Fiat', icon: '🇮🇹', score: 6.1, type: 'subsidiary' },
+                        { name: 'Jeep', icon: '🚙', score: 6.8, type: 'subsidiary' }
+                    ]
+                },
+                directExposure: 68,
+                contagionRisk: 52,
+                sectorConcentration: 85
+            },
+            safran: {
+                name: 'Safran SA',
+                icon: '⚙️',
+                sector: 'Aerospace',
+                country: 'France',
+                score: 7.8,
+                revenue: '€23.2B',
+                employees: '83,000',
+                connections: {
+                    suppliers: [
+                        { name: 'Hexcel Corp', icon: '🧱', score: 6.9, type: 'supplier' },
+                        { name: 'Precision Cast', icon: '🔩', score: 7.1, type: 'supplier' }
+                    ],
+                    customers: [
+                        { name: 'Airbus SE', icon: '✈️', score: 8.2, type: 'customer' },
+                        { name: 'Boeing', icon: '🛫', score: 6.5, type: 'customer' },
+                        { name: 'Dassault', icon: '🛩️', score: 7.4, type: 'customer' }
+                    ],
+                    subsidiaries: [
+                        { name: 'Safran Nacelles', icon: '🔧', score: 7.6, type: 'subsidiary' }
+                    ]
+                },
+                directExposure: 32,
+                contagionRisk: 18,
+                sectorConcentration: 91
+            },
+            valeo: {
+                name: 'Valeo SE',
+                icon: '🔧',
+                sector: 'Auto Parts',
+                country: 'France',
+                score: 4.9,
+                revenue: '€22.0B',
+                employees: '109,000',
+                connections: {
+                    suppliers: [
+                        { name: 'Infineon', icon: '💾', score: 7.5, type: 'supplier' },
+                        { name: 'STMicro', icon: '🔌', score: 6.8, type: 'supplier' }
+                    ],
+                    customers: [
+                        { name: 'Stellantis NV', icon: '🚗', score: 6.4, type: 'customer' },
+                        { name: 'Renault', icon: '🚗', score: 5.2, type: 'customer' },
+                        { name: 'VW Group', icon: '🚙', score: 6.1, type: 'customer' }
+                    ],
+                    subsidiaries: []
+                },
+                directExposure: 78,
+                contagionRisk: 65,
+                sectorConcentration: 95
+            }
+        };
+
+        function selectCompany(companyId) {
+            selectedCompany = companyId;
+            document.querySelectorAll('.company-item').forEach(item => item.classList.remove('selected'));
+            event.currentTarget.classList.add('selected');
+
+            const company = companyData[companyId];
+            renderCompanyProfile(company);
+            renderRiskMetrics(company);
+            renderGraph(company);
+            document.getElementById('alertPanel').style.display = 'none';
+        }
+
+        function renderCompanyProfile(company) {
+            const profile = document.getElementById('companyProfile');
+            profile.innerHTML = `
+                <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="width: 50px; height: 50px; border-radius: 12px; background: linear-gradient(135deg, var(--primary) 0%, #a78bfa 100%); display: flex; align-items: center; justify-content: center; font-size: 1.5rem;">${company.icon}</div>
+                    <div>
+                        <h3 style="font-size: 1rem; font-weight: 600;">${company.name}</h3>
+                        <p style="font-size: 0.75rem; color: var(--text-muted);">${company.sector} • ${company.country}</p>
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem;">
+                    <div style="background: var(--bg-elevated); padding: 0.75rem; border-radius: 8px;">
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">Coface Score</div>
+                        <div style="font-size: 1.25rem; font-weight: 700; color: ${company.score >= 7 ? 'var(--success)' : company.score >= 5 ? 'var(--warning)' : 'var(--danger)'};">${company.score}/10</div>
+                    </div>
+                    <div style="background: var(--bg-elevated); padding: 0.75rem; border-radius: 8px;">
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">Revenue</div>
+                        <div style="font-size: 1.25rem; font-weight: 700;">${company.revenue}</div>
+                    </div>
+                    <div style="background: var(--bg-elevated); padding: 0.75rem; border-radius: 8px;">
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">Employees</div>
+                        <div style="font-size: 1.25rem; font-weight: 700;">${company.employees}</div>
+                    </div>
+                    <div style="background: var(--bg-elevated); padding: 0.75rem; border-radius: 8px;">
+                        <div style="font-size: 0.7rem; color: var(--text-muted);">Connections</div>
+                        <div style="font-size: 1.25rem; font-weight: 700;">${company.connections.suppliers.length + company.connections.customers.length + company.connections.subsidiaries.length}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderRiskMetrics(company) {
+            document.getElementById('riskMetrics').innerHTML = `
+                <div class="risk-metric">
+                    <div class="risk-metric-header">
+                        <span class="risk-metric-label">Direct Exposure</span>
+                        <span class="risk-metric-value" style="color: var(--primary);">€${company.directExposure}M</span>
+                    </div>
+                    <div class="risk-bar">
+                        <div class="risk-fill" style="width: ${company.directExposure}%; background: var(--primary);"></div>
+                    </div>
+                </div>
+                <div class="risk-metric">
+                    <div class="risk-metric-header">
+                        <span class="risk-metric-label">Contagion Risk</span>
+                        <span class="risk-metric-value" style="color: ${company.contagionRisk > 50 ? 'var(--danger)' : 'var(--warning)'};">${company.contagionRisk}%</span>
+                    </div>
+                    <div class="risk-bar">
+                        <div class="risk-fill" style="width: ${company.contagionRisk}%; background: ${company.contagionRisk > 50 ? 'var(--danger)' : 'var(--warning)'};"></div>
+                    </div>
+                </div>
+                <div class="risk-metric">
+                    <div class="risk-metric-header">
+                        <span class="risk-metric-label">Sector Concentration</span>
+                        <span class="risk-metric-value" style="color: var(--secondary);">${company.sectorConcentration}%</span>
+                    </div>
+                    <div class="risk-bar">
+                        <div class="risk-fill" style="width: ${company.sectorConcentration}%; background: var(--secondary);"></div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderGraph(company) {
+            const container = document.getElementById('graphContainer');
+            const svg = document.getElementById('graphSvg');
+            const nodesDiv = document.getElementById('graphNodes');
+            
+            // Clear previous
+            svg.innerHTML = '';
+            nodesDiv.innerHTML = '';
+
+            const centerX = container.offsetWidth / 2;
+            const centerY = container.offsetHeight / 2;
+
+            // Central node
+            nodesDiv.innerHTML += `
+                <div class="graph-node" style="left: ${centerX - 40}px; top: ${centerY - 55}px;">
+                    <div class="node-circle primary">${company.icon}</div>
+                    <div class="node-label">${company.name}</div>
+                    <div class="node-risk ${company.score >= 7 ? 'low' : company.score >= 5 ? 'medium' : 'high'}">${company.score}/10</div>
+                </div>
+            `;
+
+            // All connections
+            const allConnections = [
+                ...company.connections.suppliers,
+                ...company.connections.customers,
+                ...company.connections.subsidiaries
+            ];
+
+            const angleStep = (2 * Math.PI) / allConnections.length;
+            const radius = 180;
+
+            allConnections.forEach((conn, i) => {
+                const angle = angleStep * i - Math.PI / 2;
+                const x = centerX + radius * Math.cos(angle);
+                const y = centerY + radius * Math.sin(angle);
+
+                // Draw line
+                const lineClass = conn.type === 'supplier' ? 'supply' : conn.type === 'customer' ? 'customer' : 'ownership';
+                svg.innerHTML += `<line class="graph-line ${lineClass}" x1="${centerX}" y1="${centerY}" x2="${x}" y2="${y}"/>`;
+
+                // Draw node
+                const riskClass = conn.score >= 7 ? 'low' : conn.score >= 5 ? 'medium' : 'high';
+                nodesDiv.innerHTML += `
+                    <div class="graph-node" style="left: ${x - 30}px; top: ${y - 45}px;">
+                        <div class="node-circle ${conn.type}">${conn.icon}</div>
+                        <div class="node-label">${conn.name}</div>
+                        <div class="node-risk ${riskClass}">${conn.score}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function simulateDefault() {
+            if (!selectedCompany) {
+                alert('Please select a company first');
+                return;
+            }
+
+            const company = companyData[selectedCompany];
+            document.getElementById('alertPanel').style.display = 'block';
+            document.getElementById('alertText').textContent = `If ${company.name} defaults, ${company.connections.customers.length + company.connections.suppliers.length} connected companies face €${(company.directExposure * 0.3).toFixed(1)}M exposure`;
+
+            // Render impact table
+            const impactTable = document.getElementById('impactTable');
+            let impactHTML = '';
+            
+            const affected = [...company.connections.customers, ...company.connections.suppliers].slice(0, 5);
+            affected.forEach(conn => {
+                const exposure = (Math.random() * 5 + 1).toFixed(1);
+                impactHTML += `
+                    <div class="impact-row">
+                        <div class="impact-company">
+                            <span class="impact-icon">${conn.icon}</span>
+                            <span>${conn.name}</span>
+                        </div>
+                        <span class="impact-exposure" style="color: var(--danger);">€${exposure}M</span>
+                    </div>
+                `;
+            });
+
+            impactTable.innerHTML = impactHTML;
+        }
+
+        function expandGraph() {
+            alert('In production, this would expand to show 2nd-degree connections');
+        }
+
+        function exportGraph() {
+            alert('Graph data exported to JSON');
+        }
+
+        function runQuery() {
+            alert('Query executed: Found 23 companies matching criteria');
+        }
+
+        function zoomIn() {
+            // Placeholder
+        }
+
+        function zoomOut() {
+            // Placeholder  
+        }
+
+        function resetGraph() {
+            if (selectedCompany) {
+                renderGraph(companyData[selectedCompany]);
+            }
+        }
+    </script>
+</body>
+</html>
